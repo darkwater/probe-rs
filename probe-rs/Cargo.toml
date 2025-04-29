@@ -25,6 +25,7 @@ gdb-server = ["dep:gdbstub"]
 
 # Enable all built in targets.
 builtin-targets = ["dep:bincode", "dep:serde_yaml", "dep:probe-rs-target"]
+cmsisdap = ["dep:hidapi"]
 
 # Enable helpers for testing
 test = []
@@ -40,7 +41,7 @@ bitfield = "0.18.0"
 bitvec = "1"
 hidapi = { version = "2", default-features = false, features = [
     "linux-native",
-] }
+], optional = true }
 ihex = "3.0"
 itertools = "0.14"
 jep106 = "0.2"

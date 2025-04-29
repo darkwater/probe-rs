@@ -108,10 +108,17 @@ impl StLinkUsbDevice {
             .find(|device| selector_matches(selector, device))
             .ok_or(ProbeCreationError::NotFound)?;
 
-        let info = USB_PID_EP_MAP[&device.product_id()].clone();
-
         let device_handle = device.open().map_err(ProbeCreationError::Usb)?;
         tracing::debug!("Aquired handle for probe");
+
+        Self::new_from_device(device_handle, device.product_id())
+    }
+
+    pub fn new_from_device(
+        device_handle: nusb::Device,
+        product_id: u16,
+    ) -> Result<Self, ProbeCreationError> {
+        let info = USB_PID_EP_MAP[&product_id].clone();
 
         let mut endpoint_out = false;
         let mut endpoint_in = false;

@@ -80,6 +80,27 @@ impl ProbeFactory for StLinkFactory {
         Ok(Box::new(stlink))
     }
 
+    fn open_from_device(&self, device: nusb::Device, product_id: u16) -> Result<Box<dyn DebugProbe>, DebugProbeError> {
+        let device = StLinkUsbDevice::new_from_device(device, product_id)?;
+        let mut stlink = StLink {
+            name: format!("ST-Link {}", &device.info.version_name),
+            device,
+            hw_version: 0,
+            jtag_version: 0,
+            protocol: WireProtocol::Swd,
+            swd_speed_khz: 1_800,
+            jtag_speed_khz: 1_120,
+            swo_enabled: false,
+            scan_chain: None,
+
+            opened_aps: vec![],
+        };
+
+        stlink.init()?;
+
+        Ok(Box::new(stlink))
+    }
+
     fn list_probes(&self) -> Vec<DebugProbeInfo> {
         tools::list_stlink_devices()
     }

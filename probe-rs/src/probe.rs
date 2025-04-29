@@ -4,6 +4,7 @@ pub(crate) mod common;
 pub(crate) mod usb_util;
 
 pub mod blackmagic;
+#[cfg(feature = "cmsisdap")]
 pub mod cmsisdap;
 pub mod espusbjtag;
 pub mod fake_probe;
@@ -258,6 +259,7 @@ pub enum ProbeCreationError {
     CouldNotOpen,
 
     /// An HID API occurred.
+    #[cfg(feature = "cmsisdap")]
     HidApi(#[from] hidapi::HidError),
 
     /// A USB error occurred.
@@ -600,6 +602,10 @@ pub trait ProbeFactory: std::any::Any + std::fmt::Display + std::fmt::Debug + Sy
 
     /// Returns a list of all available debug probes of the current type.
     fn list_probes(&self) -> Vec<DebugProbeInfo>;
+
+    fn open_from_device(&self, device: nusb::Device, product_id: u16) -> Result<Box<dyn DebugProbe>, DebugProbeError> {
+        unimplemented!()
+    }
 }
 
 /// An abstraction over general debug probe.
